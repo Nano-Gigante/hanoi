@@ -27,8 +27,10 @@ class hanoi:
 
     #moves the top disk from source to dst if possible
     def move(self,src,dst):
+        #if the source stick is empty returns
         if len(self.board[src]) == 0:
             return
+        #is the move is valid it performs it
         if len(self.board[dst]) == 0 or self.board[dst][-1] > self.board[src][-1]:
             if self.verbose:
                 print(f'moving {self.board[src][-1]} to {dst+1}')
@@ -42,11 +44,13 @@ class hanoi:
     def obs(self,n,dst) -> list:
         src = self.locate(n)
         ris = None
-        
+
+        #checks if there are other disks on top of n
         if self.board[src][-1] != n:
             top = self.board[src][self.board[src].index(n)+1:][0]
             ris = [ top , 3 - src - dst]
         else:
+            #check if there are smaller disks at the destination stick
             for i in self.board[dst]:
                 if i < n:
                     ris = [ i , 3 - dst - src ]
@@ -65,17 +69,21 @@ class hanoi:
     #recursive mover 
     def rec_move(self,n,dst):
         o = self.obs(n,dst)
-
+        
+        #if the destination and source match the move is discarded
         if self.locate(n) == dst:
             return
 
+        #while there are problems it attempts to fix them
         while o is not None:
             self.rec_move(o[0],o[1])
             o = self.obs(n,dst)
         
+        #finally makes the move once all the problems are solved
         self.move(self.locate(n),dst)
 
     def solve(self):
+        #moves every disk to the rightmost stick
         for i in range(self.pn):
             self.rec_move(self.pn-i,2)
 
