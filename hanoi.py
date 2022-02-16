@@ -66,6 +66,9 @@ class hanoi:
     def rec_move(self,n,dst):
         o = self.obs(n,dst)
 
+        if self.locate(n) == dst:
+            return
+
         while o is not None:
             self.rec_move(o[0],o[1])
             o = self.obs(n,dst)
@@ -78,6 +81,6 @@ class hanoi:
 
         print(f'solved in {self.moves} moves')
 
-
-h = hanoi(20)
-h.solve()
+if __name__ == '__main__':
+    h = hanoi(5,True)
+    h.solve()
