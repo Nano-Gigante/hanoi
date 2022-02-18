@@ -1,11 +1,18 @@
+from tabnanny import verbose
+from imager import imager
+
 class hanoi:
 
-    def __init__(self,n,vb=False):
+    def __init__(self,n,verbose=False,makevideo = False):
         self.pn = n
         self.board = [[self.pn - x for x in range(self.pn)] , [] , []]
         self.moves = 0
-        self.verbose = vb
-    
+        self.verbose = verbose
+        self.makevideo = makevideo
+        self.imager = imager(n)
+
+        self.imager.render(self.board)
+
 
     #finds a disk
     def locate(self,n):
@@ -35,10 +42,14 @@ class hanoi:
             if self.verbose:
                 print(f'moving {self.board[src][-1]} to {dst+1}')
                 self.printt()
-            self.board[dst].append(self.board[src].pop())
+            #performs move and log it
+            self.board[dst].append(self.board[src].pop()) 
             self.moves+=1
-
-
+            
+            #render frame and saves it
+            if self.makevideo:
+                self.imager.render(self.board)
+    
     #checks if there are problems with a move
     #if there are it returns a move that fixs the problem
     def obs(self,n,dst) -> list:
@@ -82,13 +93,18 @@ class hanoi:
         #finally makes the move once all the problems are solved
         self.move(self.locate(n),dst)
 
-    def solve(self):
+    def solve(self,fps=2):
         #moves every disk to the rightmost stick
         for i in range(self.pn):
             self.rec_move(self.pn-i,2)
 
+        if self.makevideo:
+            self.imager.makevideo(fps)
         print(f'solved in {self.moves} moves')
 
+
+
 if __name__ == '__main__':
-    h = hanoi(5,True)
-    h.solve()
+    h = hanoi(5,verbose=True,makevideo=True)
+
+    h.solve(2)
